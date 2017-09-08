@@ -1,16 +1,17 @@
 import React from 'react';
-import {Provider} from 'react-redux';
+import {connect} from 'react-redux';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
-import appStoreCreate from '../../lib/app-create-store.js';
-import LandingContainer from '../landing';
+import Landing from '../landing';
+import Settings from '../settings';
 
-let store = appStoreCreate();
+import * as util from '../../lib/util.js';
+import {tokenSet} from '../../action/auth-actions.js'
 
 class App extends React.Component {
+
   render() {
     return (
       <div className='cfgram'>
-        <Provider store={store}>
           <BrowserRouter>
             <section>
               <header>
@@ -19,16 +20,25 @@ class App extends React.Component {
                   <ul>
                     <li><Link to='/welcome/signup'>signup</Link></li>
                     <li><Link to='/welcome/login'>login</Link></li>
+                    <li><Link to='/settings'>settings</Link></li>
                   </ul>
                 </nav>
               </header>
-              <Route path='/welcome/:auth' component={LandingContainer} />
+              <Route path='/welcome/:auth' component={Landing} />
+              <Route exact path='/settings' component={Settings} />
             </section>
           </BrowserRouter>
-        </Provider>
       </div>
     )
   }
 }
 
-export default App;
+let mapStateToProps = (state) => ({
+  profile: state.profile
+})
+
+let mapDispatchToProps = (dispatch) => ({
+  tokenSet: (token) => dispatch(tokenSet(token))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
